@@ -77,10 +77,3 @@ src/main/java/com/expensetracker
 
 ---
 
-
-
-## 🛡️ Security Details
-
-For simplicity and ease of understanding for beginners, **Spring Security is NOT used**.
-*   **Custom Login Enforcement**: A `SessionInterceptor` intercepts requests to URLs (excluding `/login`, `/register`, and static files) and checks if the HTTP Session attribute `"loggedUser"` is set. If not, it redirects the request to `/login`.
-*   **Password Hashing**: Passwords are securely hashed using a custom `SHA-256` hashing logic inside `UserServiceImpl` before saving to the database. This ensures passwords are not stored in plaintext.
