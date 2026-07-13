@@ -77,45 +77,7 @@ src/main/java/com/expensetracker
 
 ---
 
-## ⚙️ Setup & Installation Instructions
 
-Follow these step-by-step instructions to set up and run the project locally.
-
-### 1. Prerequisites
-Make sure you have the following installed:
-*   **Java Development Kit (JDK) 17**
-*   **Apache Maven**
-*   **MySQL Server**
-*   Any standard IDE (IntelliJ IDEA, Eclipse, VS Code)
-
-### 2. Database Configuration
-1. Open your MySQL client (Command Line, Workbench, or DBeaver).
-2. Execute the commands found in `schema.sql` at the root of the project to create the database and tables:
-   ```sql
-   CREATE DATABASE IF NOT EXISTS expense_tracker;
-   ```
-3. Set your local MySQL credentials in `src/main/resources/application.properties`:
-   ```properties
-   spring.datasource.username=YOUR_MYSQL_USERNAME
-   spring.datasource.password=YOUR_MYSQL_PASSWORD
-   ```
-
-### 3. Build & Compile the Project
-Open a terminal in the project directory and run:
-```bash
-mvn clean compile
-```
-
-### 4. Running the Application
-To launch the Spring Boot development server, run:
-```bash
-mvn spring-boot:run
-```
-
-Once running, open your web browser and navigate to:
-👉 **[http://localhost:8080](http://localhost:8080)**
-
----
 
 ## 🛡️ Security Details
 
