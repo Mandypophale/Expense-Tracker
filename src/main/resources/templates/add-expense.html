@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: html-head('Add Expense')}"></head>
+<body>
+
+    <div class="d-flex">
+        <!-- Sidebar Navigation -->
+        <div th:replace="~{fragments :: sidebar('add-expense')}"></div>
+
+        <!-- Main Workspace -->
+        <div class="main-wrapper flex-grow-1">
+            <!-- Top Navbar -->
+            <header th:replace="~{fragments :: topbar}"></header>
+
+            <!-- Page Content -->
+            <main class="content-area">
+                <div class="mb-4">
+                    <h2 class="fw-bold mb-0">Add New Expense</h2>
+                    <p class="text-muted mb-0">Record a new outflow transaction in your ledger.</p>
+                </div>
+
+                <div class="row">
+                    <div class="col-12 col-lg-8">
+                        <div class="custom-card">
+                            <div class="card-header fw-bold">
+                                <i class="bi bi-plus-circle text-primary me-2"></i>Expense details
+                            </div>
+                            <div class="card-body">
+                                <form th:action="@{/expenses/add}" th:object="${expenseDto}" method="post" novalidate>
+                                    <!-- Title -->
+                                    <div class="mb-3">
+                                        <label for="title" class="form-label">Expense Title <span class="text-danger">*</span></label>
+                                        <input type="text" id="title" th:field="*{title}" class="form-control"
+                                               th:classappend="${#fields.hasErrors('title')} ? 'is-invalid' : ''" placeholder="e.g. Grocery shopping">
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+                                    </div>
+
+                                    <div class="row">
+                                        <!-- Amount -->
+                                        <div class="col-md-6 mb-3">
+                                            <label for="amount" class="form-label">Amount (Rs.) <span class="text-danger">*</span></label>
+                                            <input type="number" step="0.01" id="amount" th:field="*{amount}" class="form-control"
+                                                   th:classappend="${#fields.hasErrors('amount')} ? 'is-invalid' : ''" placeholder="0.00">
+                                            <div class="invalid-feedback" th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}"></div>
+                                        </div>
+
+                                        <!-- Category -->
+                                        <div class="col-md-6 mb-3">
+                                            <label for="category" class="form-label">Category <span class="text-danger">*</span></label>
+                                            <select id="category" th:field="*{category}" class="form-select"
+                                                    th:classappend="${#fields.hasErrors('category')} ? 'is-invalid' : ''">
+                                                <option value="" selected>-- Select Category --</option>
+                                                <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat}">Food</option>
+                                            </select>
+                                            <div class="invalid-feedback" th:if="${#fields.hasErrors('category')}" th:errors="*{category}"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Date -->
+                                    <div class="mb-3">
+                                        <label for="expenseDate" class="form-label">Expense Date <span class="text-danger">*</span></label>
+                                        <input type="date" id="expenseDate" th:field="*{expenseDate}" class="form-control"
+                                               th:classappend="${#fields.hasErrors('expenseDate')} ? 'is-invalid' : ''">
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('expenseDate')}" th:errors="*{expenseDate}"></div>
+                                    </div>
+
+                                    <!-- Description -->
+                                    <div class="mb-4">
+                                        <label for="description" class="form-label">Description (Optional)</label>
+                                        <textarea id="description" th:field="*{description}" class="form-control" rows="3" placeholder="Add details or notes..."></textarea>
+                                    </div>
+
+                                    <!-- Buttons -->
+                                    <div class="d-flex gap-2">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="bi bi-check-circle me-1"></i> Save Expense
+                                        </button>
+                                        <a th:href="@{/expenses}" class="btn btn-outline-secondary">
+                                            Cancel
+                                        </a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Script imports -->
+    <div th:replace="~{fragments :: footer-scripts}"></div>
+</body>
+</html>

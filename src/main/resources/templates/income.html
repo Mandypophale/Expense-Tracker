@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: html-head('Income')}"></head>
+<body>
+
+    <div class="d-flex">
+        <!-- Sidebar Navigation -->
+        <div th:replace="~{fragments :: sidebar('income')}"></div>
+
+        <!-- Main Workspace -->
+        <div class="main-wrapper flex-grow-1">
+            <!-- Top Navbar -->
+            <header th:replace="~{fragments :: topbar}"></header>
+
+            <!-- Page Content -->
+            <main class="content-area">
+                <div class="mb-4">
+                    <h2 class="fw-bold mb-0">Income Management</h2>
+                    <p class="text-muted mb-0">Manage and track your cash inflows here.</p>
+                </div>
+
+                <!-- Flash Message Alerts -->
+                <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                    <i class="bi bi-check-circle-fill me-2"></i> <span th:text="${successMessage}">Success</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i> <span th:text="${errorMessage}">Error</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
+                <!-- Split layout (Left: Add/Edit Form, Right: Incomes list table) -->
+                <div class="row g-4">
+                    <!-- Form Section -->
+                    <div class="col-12 col-lg-4">
+                        <div class="custom-card">
+                            <div class="card-header fw-bold" th:classappend="${isEdit} ? 'bg-primary-subtle' : ''">
+                                <i class="bi me-2 text-primary" th:classappend="${isEdit} ? 'bi-pencil-square' : 'bi-plus-circle'"></i>
+                                <span th:text="${isEdit} ? 'Edit Income' : 'Add Income'">Add Income</span>
+                            </div>
+                            <div class="card-body">
+                                <form th:action="@{/income}" th:object="${incomeDto}" method="post" novalidate>
+                                    <!-- Hidden ID for edit mode -->
+                                    <input type="hidden" th:field="*{id}">
+
+                                    <!-- Source Field -->
+                                    <div class="mb-3">
+                                        <label for="source" class="form-label">Income Source <span class="text-danger">*</span></label>
+                                        <input type="text" id="source" th:field="*{source}" class="form-control"
+                                               th:classappend="${#fields.hasErrors('source')} ? 'is-invalid' : ''" placeholder="e.g. Monthly Salary">
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('source')}" th:errors="*{source}"></div>
+                                    </div>
+
+                                    <!-- Amount Field -->
+                                    <div class="mb-3">
+                                        <label for="amount" class="form-label">Amount (Rs.) <span class="text-danger">*</span></label>
+                                        <input type="number" step="0.01" id="amount" th:field="*{amount}" class="form-control"
+                                               th:classappend="${#fields.hasErrors('amount')} ? 'is-invalid' : ''" placeholder="0.00">
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}"></div>
+                                    </div>
+
+                                    <!-- Date Field -->
+                                    <div class="mb-4">
+                                        <label for="incomeDate" class="form-label">Income Date <span class="text-danger">*</span></label>
+                                        <input type="date" id="incomeDate" th:field="*{incomeDate}" class="form-control"
+                                               th:classappend="${#fields.hasErrors('incomeDate')} ? 'is-invalid' : ''">
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('incomeDate')}" th:errors="*{incomeDate}"></div>
+                                    </div>
+
+                                    <!-- Actions -->
+                                    <div class="d-grid gap-2">
+                                        <button type="submit" class="btn" th:classappend="${isEdit} ? 'btn-primary' : 'btn-success text-white'">
+                                            <i class="bi me-1" th:classappend="${isEdit} ? 'bi-check-circle' : 'bi-plus-circle'"></i>
+                                            <span th:text="${isEdit} ? 'Update Income' : 'Save Income'">Save Income</span>
+                                        </button>
+                                        <a th:if="${isEdit}" th:href="@{/income}" class="btn btn-outline-secondary">
+                                            Cancel Edit
+                                        </a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Table List Section -->
+                    <div class="col-12 col-lg-8">
+                        <div class="custom-card">
+                            <div class="card-header fw-bold">
+                                <i class="bi bi-list-task text-success me-2"></i>Cash Inflows Ledger
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th class="ps-4">Source</th>
+                                                <th>Date</th>
+                                                <th>Amount</th>
+                                                <th class="text-end pe-4">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="inc : ${incomes}">
+                                                <td class="ps-4 fw-medium" th:text="${inc.source}">Monthly Salary</td>
+                                                <td th:text="${#temporals.format(inc.incomeDate, 'dd MMM yyyy')}">10 Jul 2026</td>
+                                                <td class="text-success fw-semibold" 
+                                                    th:text="'+Rs. ' + ${#numbers.formatDecimal(inc.amount, 1, 'COMMA', 2, 'POINT')}">+Rs. 2,500.00</td>
+                                                <td class="text-end pe-4">
+                                                    <div class="d-inline-flex gap-2">
+                                                        <a th:href="@{/income(editId=${inc.id})}" 
+                                                           class="btn btn-icon btn-outline-primary" title="Edit">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </a>
+                                                        <a th:href="@{/income/delete/{id}(id=${inc.id})}" 
+                                                           class="btn btn-icon btn-outline-danger" 
+                                                           onclick="return confirmDelete(event, 'Are you sure you want to delete this income entry?')" 
+                                                           title="Delete">
+                                                            <i class="bi bi-trash"></i>
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <!-- Empty state -->
+                                            <tr th:if="${#lists.isEmpty(incomes)}">
+                                                <td colspan="4" class="text-center py-5 text-muted">
+                                                    <i class="bi bi-piggy-bank fs-1 d-block mb-2"></i>
+                                                    No income logged yet. Fill out the form to add your first inflow.
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Script imports -->
+    <div th:replace="~{fragments :: footer-scripts}"></div>
+</body>
+</html>
